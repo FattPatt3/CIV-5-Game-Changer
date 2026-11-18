@@ -14,4 +14,5 @@ for sc in standard asc10 asc5life colonstore quick marathon lose short; do
     lua5.1 tools/sim/run_sim.lua $sc $seed
   done
 done
+lua5.1 tools/sim/test_repair.lua
 echo "ALL TESTS PASSED"

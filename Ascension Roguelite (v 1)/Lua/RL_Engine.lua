@@ -1111,7 +1111,12 @@ local HORDE_MIX = { "MELEE", "MELEE", "RANGED", "MOUNTED", "MELEE", "SIEGE", "RA
 local function SpawnHordeUnit(role, era, plot, extraPromos)
 	local row = Fx.BestRoleUnit(Barb():GetID(), role, RL.Clamp(era, 0, 7))
 	if not row or not plot then return nil end
-	local u = Barb():InitUnit(row.ID, plot:GetX(), plot:GetY(), UnitAITypes.UNITAI_ATTACK)
+	-- NOTE: there is no UnitAITypes global in Civ V; unit AI ids come from the
+	-- UnitAIInfos table via GameInfoTypes. Without one the unit uses its default AI.
+	local ai = GameInfoTypes.UNITAI_ATTACK
+	local u
+	if ai then u = Barb():InitUnit(row.ID, plot:GetX(), plot:GetY(), ai)
+	else u = Barb():InitUnit(row.ID, plot:GetX(), plot:GetY()) end
 	if not u then return nil end
 	if GameInfoTypes.PROMOTION_RL_HORDE then u:SetHasPromotion(GameInfoTypes.PROMOTION_RL_HORDE, true) end
 	for _, pr in ipairs(extraPromos or {}) do if GameInfoTypes[pr] then u:SetHasPromotion(GameInfoTypes[pr], true) end end
@@ -1175,11 +1180,11 @@ local function ProcessWaves(turn)
 		local target
 		if W.tx then local pl = Map.GetPlot(W.tx, W.ty); if pl and pl:IsCity() and pl:GetPlotCity():GetOwner() == S.human then target = pl:GetPlotCity() end end
 		local n = WaveSize()
-		local spawned = Fx.SpawnHostilesNear(S.human, n, "The Horde attacks!", 0, target)
+		W.next = turn + WaveInterval()
+		W.warned, W.tx, W.ty = false, nil, nil
+		local spawned = RL.Try("HordeSpawn", Fx.SpawnHostilesNear, S.human, n, "The Horde attacks!", 0, target) or 0
 		W.count = W.count + 1
 		W.bonus = 0
-		W.warned, W.tx, W.ty = false, nil, nil
-		W.next = turn + WaveInterval()
 		if spawned > 0 then RL.LogRun("Horde raid #" .. W.count .. " (" .. spawned .. " units)") end
 	end
 end
@@ -1254,11 +1259,22 @@ function RL.CheckBoss()
 end
 
 -- One queued Warlord (waiting or failed to find room) per turn.
-local function ProcessBossQueue()
+local function ProcessBossQueue(turn)
 	local S = RL.State
+	S.boss.queue = S.boss.queue or {}
 	local q = S.boss.queue
-	if S.boss.active or not q or #q == 0 then return end
-	RL.SpawnBoss(table.remove(q, 1))
+	-- Catch-up: any Warlord whose arrival time has passed but never spawned
+	-- (e.g. a save from a version where spawning failed) joins the queue.
+	local era = Players[S.human]:GetCurrentEra()
+	for idx = 0, 7 do
+		local due = (idx == 0 and turn >= RL.Interval(RL.FIRST_BOSS_TURN)) or (idx > 0 and era >= idx)
+		if due and not S.bossesSpawned[idx] and not RL.Contains(q, idx) and S.boss.idx ~= idx then q[#q + 1] = idx end
+	end
+	table.sort(q)
+	if S.boss.active or #q == 0 then return end
+	local idx = table.remove(q, 1)
+	RL.SpawnBoss(idx)
+	if not S.bossesSpawned[idx] and not RL.Contains(q, idx) then table.insert(q, 1, idx) end
 end
 
 -- =====================================================================
@@ -1594,7 +1610,7 @@ local function ProcessEra(pid)
 			RL.AwardLegacy("era" .. e, RL.LegacyAwards.ERA, "Reached the " .. RL.EraName(e))
 			Fx.QueueDraft("Dawn of the " .. RL.EraName(e), 1)
 			if RL.Meta.Rank("FORTUNE") >= 3 then Fx.Rerolls(1) end
-			if e >= 1 then RL.SpawnBoss(e) end
+			-- Warlord e is queued by ProcessBossQueue on the human's turn
 		else
 			RL.AIDraft(pid, 1)
 			if S.ascension >= 4 then RL.AIDraft(pid, 1) end
@@ -1612,29 +1628,34 @@ function RL.OnPlayerDoTurn(pid)
 		local touched = ExpireTemps()
 		for tp in pairs(touched) do if tp ~= pid then RL.SyncPlayer(tp) end end
 	end
-	RL.SyncPlayer(pid)
-	CardsHook(pid, "onTurn", turn)
-	ProcessEra(pid)
+	-- Every subsystem runs in its own protected call: one failure is logged
+	-- to Lua.log and can never stop the others from running this turn.
+	RL.Try("Sync", RL.SyncPlayer, pid)
+	RL.Try("onTurn", CardsHook, pid, "onTurn", turn)
+	RL.Try("Era", ProcessEra, pid)
 
 	if pid == S.human then
 		local active = not S.over or S.won
-		ProcessChampion(turn)
-		RL.CheckBoss()
-		ProcessBossQueue()
+		RL.Try("Champion", ProcessChampion, turn)
+		RL.Try("CheckBoss", RL.CheckBoss)
 		if active then
-			if not S.bossesSpawned[0] and turn >= RL.Interval(RL.FIRST_BOSS_TURN) then RL.SpawnBoss(0) end
-			ProcessWaves(turn)
-			if turn >= S.nextMilestone then
-				Fx.QueueDraft("Milestone: Turn " .. turn, 1)
-				S.nextMilestone = turn + RL.Interval(30)
-			end
-			if turn >= S.nextEventTurn and #S.pending == 0 then
-				RL.RollEvent()
-				S.nextEventTurn = turn + RL.Interval(RL.RandRange(12, 18))
-			end
-			ProcessQuest(turn)
+			RL.Try("BossQueue", ProcessBossQueue, turn)
+			RL.Try("Waves", ProcessWaves, turn)
+			RL.Try("Milestone", function()
+				if turn >= S.nextMilestone then
+					S.nextMilestone = turn + RL.Interval(30)
+					Fx.QueueDraft("Milestone: Turn " .. turn, 1)
+				end
+			end)
+			RL.Try("Events", function()
+				if turn >= S.nextEventTurn and #S.pending == 0 then
+					S.nextEventTurn = turn + RL.Interval(RL.RandRange(12, 18))
+					RL.RollEvent()
+				end
+			end)
+			RL.Try("Quest", ProcessQuest, turn)
 		end
-		CheckDefeat()
+		RL.Try("Defeat", CheckDefeat)
 		-- SaveData writes are slow; AI-turn changes are flushed here, at the
 		-- start of the human's turn, before any autosave is written.
 		RL.Save()

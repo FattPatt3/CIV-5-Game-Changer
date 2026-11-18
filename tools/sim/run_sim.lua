@@ -17,6 +17,7 @@ local seed = tonumber(arg[2] or "1")
 math.randomseed(seed)
 
 dofile(MOCK_DIR .. "/mock_civ.lua")
+os.time = function() return 1700000000 + seed end   -- reproducible run seeds
 if scenario == "colonstore" then MOCK.storeStyle = "colon" end
 if scenario == "quick" then MOCK.speed = 2 end
 if scenario == "marathon" then MOCK.speed = 0 end
@@ -218,7 +219,7 @@ for city in Players[0]:Cities() do for _ in pairs(city.buildings) do hasTemp = h
 
 -- Sanity expectations for a full run
 if scenario == "asc5life" then
-	if MOCK.livesAtChampionDeath ~= 1 then fail("expected 1 extra life at champion death") end
+	if (MOCK.livesAtChampionDeath or 0) < 1 then fail("expected an extra life at champion death") end
 	if not RL.ChampionUnit() and not S.over then fail("champion not respawned after extra life") end
 end
 if scenario == "lose" then

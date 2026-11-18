@@ -36,6 +36,7 @@ for t in pairs(unitTechs) do GEN.Technologies[#GEN.Technologies + 1] = { ID = #G
 GEN.Civilizations = { { ID = 0, Type = "CIVILIZATION_ROME" }, { ID = 1, Type = "CIVILIZATION_GREECE" } }
 GEN.Civilization_UnitClassOverrides = { { CivilizationType = "CIVILIZATION_ROME", UnitClassType = "UNITCLASS_SWORDSMAN", UnitType = "UNIT_SWORDSMAN" } }
 GEN.Building_FeatureYieldChanges = GEN.Building_FeatureYieldChanges or {}
+GEN.UnitAIInfos = { { ID = 0, Type = "UNITAI_UNKNOWN" }, { ID = 1, Type = "UNITAI_SETTLE" }, { ID = 2, Type = "UNITAI_WORKER" }, { ID = 3, Type = "UNITAI_ATTACK" }, { ID = 4, Type = "UNITAI_DEFENSE" } }
 
 local function MakeTable(rows, hasId)
 	local byKey = {}
@@ -79,7 +80,8 @@ end
 -- ---------------------------------------------------------------------
 GameDefines = { MAX_PLAYERS = 64, MAX_MAJOR_CIVS = 22, MAX_CIV_PLAYERS = 63 }
 DomainTypes = { DOMAIN_LAND = 0, DOMAIN_SEA = 1, DOMAIN_AIR = 2 }
-UnitAITypes = { UNITAI_ATTACK = 1, UNITAI_DEFENSE = 2 }
+-- NOTE: Civ V does NOT register a UnitAITypes global (see CvLuaEnums.cpp);
+-- unit AI ids live in GameInfoTypes (UnitAIInfos table). Don't add one here.
 NotificationTypes = { NOTIFICATION_GENERIC = 0 }
 Mouse = { eLClick = 1 }
 KeyEvents = { KeyDown = 1 }
@@ -379,3 +381,15 @@ function MOCK.Click(control)
 	assert(not control.disabled, "clicked a disabled control " .. tostring(control.name))
 	cb()
 end
+
+-- ---------------------------------------------------------------------
+-- Strict globals: reading any global the real game does not provide is an
+-- error (and is recorded even if the mod's pcall swallows it).
+-- ---------------------------------------------------------------------
+local ALLOWED_UNDEFINED = { RL = true, PRELOAD_USERDATA = true, SIM_USERDATA = true }
+setmetatable(_G, { __index = function(_, k)
+	if ALLOWED_UNDEFINED[k] then return nil end
+	local msg = "ERROR: read of undefined global '" .. tostring(k) .. "' (not provided by Civ V)"
+	MOCK.errors[#MOCK.errors + 1] = msg
+	error(msg, 2)
+end })
