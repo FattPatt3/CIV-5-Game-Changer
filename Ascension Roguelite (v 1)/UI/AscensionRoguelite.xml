@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- =====================================================================
+     ASCENSION: ROGUELITE OVERHAUL - all UI in one InGameUIAddin context
+     Panels: HUD button, Draft, Event, Info, Overview, Start/Legacy, Run Over
+     ===================================================================== -->
+<Context ID="AscensionRoguelite" ColorSet="Beige_Black_Alpha" Font="TwCenMT16" FontStyle="Shadow">
+
+	<!-- ============================ HUD ============================ -->
+	<GridButton ID="HUDButton" Anchor="C,T" Offset="0,32" Size="300,34" Style="BaseButton" ToolTip="Open the Ascension run panel">
+		<Label ID="HUDLabel" Anchor="C,C" Offset="0,0" Font="TwCenMT18" ColorSet="Beige_Black_Alpha" FontStyle="Shadow" String="ASCENSION" />
+	</GridButton>
+
+	<!-- Instances -->
+	<Instance Name="CardInstance">
+		<GridButton ID="Card" Size="210,340" Style="BaseButton">
+			<Label ID="Rarity" Anchor="C,T" Offset="0,12" Font="TwCenMT16" FontStyle="Shadow" String="" />
+			<Label ID="Name" Anchor="C,T" Offset="0,34" Font="TwCenMT22" FontStyle="Shadow" WrapWidth="190" String="" />
+			<Label ID="Tags" Anchor="C,T" Offset="0,86" Font="TwCenMT14" FontStyle="Shadow" WrapWidth="190" String="" />
+			<Label ID="Desc" Anchor="C,T" Offset="0,116" Font="TwCenMT16" FontStyle="Shadow" WrapWidth="186" String="" />
+			<Label ID="Pact" Anchor="C,B" Offset="0,40" Font="TwCenMT14" FontStyle="Shadow" WrapWidth="186" String="" />
+			<Label ID="Owned" Anchor="C,B" Offset="0,14" Font="TwCenMT14" FontStyle="Shadow" String="" />
+		</GridButton>
+	</Instance>
+
+	<Instance Name="OptionInstance">
+		<GridButton ID="Option" Size="760,44" Style="BaseButton">
+			<Label ID="OptionText" Anchor="L,C" Offset="16,0" Font="TwCenMT16" FontStyle="Shadow" WrapWidth="720" String="" />
+		</GridButton>
+	</Instance>
+
+	<Instance Name="LineInstance">
+		<Label ID="Line" Anchor="L,T" Font="TwCenMT16" FontStyle="Shadow" WrapWidth="840" String="" />
+	</Instance>
+
+	<Instance Name="UpgradeInstance">
+		<Box ID="Row" Size="800,54" Color="0,0,0,0">
+			<Label ID="UName" Anchor="L,T" Offset="6,4" Font="TwCenMT18" FontStyle="Shadow" String="" />
+			<Label ID="UDesc" Anchor="L,T" Offset="6,26" Font="TwCenMT14" FontStyle="Shadow" WrapWidth="600" String="" />
+			<GridButton ID="UBuy" Anchor="R,C" Offset="6,0" Size="160,32" Style="BaseButton" String="Buy" />
+		</Box>
+	</Instance>
+
+	<!-- ============================ DRAFT ============================ -->
+	<Box ID="DraftPanel" Size="Full.Full" Color="0,0,0,170" ConsumeMouse="1" Hidden="1">
+		<Grid Anchor="C,C" Size="1140,560" Style="Grid9DetailFive140" ConsumeMouse="1">
+			<Label ID="DraftTitle" Anchor="C,T" Offset="0,22" Font="TwCenMT24" FontStyle="Shadow" String="Choose a Boon" />
+			<Label ID="DraftSub" Anchor="C,T" Offset="0,52" Font="TwCenMT16" FontStyle="Shadow" WrapWidth="1050" String="" />
+			<Stack ID="CardStack" Anchor="C,T" Offset="0,86" StackGrowth="Right" Padding="8" />
+			<GridButton ID="DraftReroll" Anchor="L,B" Offset="40,26" Size="220,36" Style="BaseButton" String="Reroll" />
+			<GridButton ID="DraftSkip" Anchor="C,B" Offset="0,26" Size="300,36" Style="BaseButton" String="Skip" />
+			<GridButton ID="DraftLater" Anchor="R,B" Offset="40,26" Size="220,36" Style="BaseButton" String="Decide Later" />
+		</Grid>
+	</Box>
+
+	<!-- ============================ EVENT ============================ -->
+	<Box ID="EventPanel" Size="Full.Full" Color="0,0,0,170" ConsumeMouse="1" Hidden="1">
+		<Grid ID="EventFrame" Anchor="C,C" Size="840,560" Style="Grid9DetailFive140" ConsumeMouse="1">
+			<Label ID="EventTitle" Anchor="C,T" Offset="0,24" Font="TwCenMT24" FontStyle="Shadow" String="" />
+			<Label ID="EventText" Anchor="L,T" Offset="40,70" Font="TwCenMT18" FontStyle="Shadow" WrapWidth="760" String="" />
+			<Stack ID="OptionStack" Anchor="C,B" Offset="0,80" StackGrowth="Top" Padding="6" />
+			<Label ID="EventResult" Anchor="C,C" Offset="0,40" Font="TwCenMT20" FontStyle="Shadow" WrapWidth="740" String="" Hidden="1" />
+			<GridButton ID="EventContinue" Anchor="C,B" Offset="0,30" Size="240,36" Style="BaseButton" String="Continue" Hidden="1" />
+			<GridButton ID="EventLater" Anchor="R,B" Offset="30,30" Size="180,32" Style="BaseButton" String="Decide Later" />
+		</Grid>
+	</Box>
+
+	<!-- ============================ INFO ============================ -->
+	<Box ID="InfoPanel" Size="Full.Full" Color="0,0,0,150" ConsumeMouse="1" Hidden="1">
+		<Grid Anchor="C,C" Size="700,420" Style="Grid9DetailFive140" ConsumeMouse="1">
+			<Label ID="InfoTitle" Anchor="C,T" Offset="0,24" Font="TwCenMT24" FontStyle="Shadow" WrapWidth="640" String="" />
+			<Label ID="InfoText" Anchor="L,T" Offset="40,70" Font="TwCenMT18" FontStyle="Shadow" WrapWidth="620" String="" />
+			<GridButton ID="InfoLook" Anchor="L,B" Offset="40,28" Size="200,36" Style="BaseButton" String="Show Me" />
+			<GridButton ID="InfoOK" Anchor="R,B" Offset="40,28" Size="200,36" Style="BaseButton" String="Onward" />
+		</Grid>
+	</Box>
+
+	<!-- ============================ OVERVIEW ============================ -->
+	<Box ID="OverviewPanel" Size="Full.Full" Color="0,0,0,150" ConsumeMouse="1" Hidden="1">
+		<Grid Anchor="C,C" Size="940,680" Style="Grid9DetailFive140" ConsumeMouse="1">
+			<Label ID="OverviewTitle" Anchor="C,T" Offset="0,22" Font="TwCenMT24" FontStyle="Shadow" String="ASCENSION RUN" />
+			<ScrollPanel ID="OverviewScroll" Anchor="L,T" Offset="36,62" Size="850,540" Vertical="1" AutoScrollBar="1">
+				<Stack ID="OverviewStack" StackGrowth="Bottom" Padding="4" />
+				<ScrollBar Style="VertSlider" Anchor="R,C" AnchorSide="O,I" Length="504" />
+				<UpButton Style="ScrollBarUp" Anchor="R,T" AnchorSide="O,I" />
+				<DownButton Style="ScrollBarDown" Anchor="R,B" AnchorSide="O,I" />
+			</ScrollPanel>
+			<Stack Anchor="C,B" Offset="0,24" StackGrowth="Right" Padding="10">
+				<GridButton ID="OvDrafts" Size="160,36" Style="BaseButton" String="Drafts" />
+				<GridButton ID="OvEvents" Size="160,36" Style="BaseButton" String="Events" />
+				<GridButton ID="OvLegacy" Size="160,36" Style="BaseButton" String="Legacy" />
+				<GridButton ID="OvAuto" Size="180,36" Style="BaseButton" String="Auto-open: On" />
+				<GridButton ID="OvClose" Size="140,36" Style="BaseButton" String="Close" />
+			</Stack>
+		</Grid>
+	</Box>
+
+	<!-- ============================ START / LEGACY ============================ -->
+	<Box ID="StartPanel" Size="Full.Full" Color="0,0,0,190" ConsumeMouse="1" Hidden="1">
+		<Grid Anchor="C,C" Size="900,720" Style="Grid9DetailFive140" ConsumeMouse="1">
+			<Label ID="StartTitle" Anchor="C,T" Offset="0,20" Font="TwCenMT24" FontStyle="Shadow" String="ASCENSION" />
+			<Label ID="StartLegacy" Anchor="C,T" Offset="0,52" Font="TwCenMT18" FontStyle="Shadow" String="" />
+
+			<Box ID="StartChoices" Anchor="C,T" Offset="0,80" Size="840,190" Color="0,0,0,0">
+				<!-- Ascension -->
+				<Label Anchor="L,T" Offset="0,0" Font="TwCenMT20" FontStyle="Shadow" String="Ascension Level" />
+				<GridButton ID="AscDown" Anchor="L,T" Offset="0,26" Size="40,32" Style="BaseButton" String="-" />
+				<Label ID="AscValue" Anchor="L,T" Offset="54,32" Font="TwCenMT20" FontStyle="Shadow" String="0" />
+				<GridButton ID="AscUp" Anchor="L,T" Offset="90,26" Size="40,32" Style="BaseButton" String="+" />
+				<Label ID="AscDesc" Anchor="L,T" Offset="0,66" Font="TwCenMT14" FontStyle="Shadow" WrapWidth="400" String="" />
+				<!-- Origin -->
+				<Label Anchor="L,T" Offset="440,0" Font="TwCenMT20" FontStyle="Shadow" String="Origin" />
+				<GridButton ID="OriginPrev" Anchor="L,T" Offset="440,26" Size="40,32" Style="BaseButton" String="&lt;" />
+				<Label ID="OriginName" Anchor="L,T" Offset="494,32" Font="TwCenMT20" FontStyle="Shadow" String="" />
+				<GridButton ID="OriginNext" Anchor="L,T" Offset="760,26" Size="40,32" Style="BaseButton" String="&gt;" />
+				<Label ID="OriginDesc" Anchor="L,T" Offset="440,66" Font="TwCenMT14" FontStyle="Shadow" WrapWidth="390" String="" />
+				<GridButton ID="OriginBuy" Anchor="L,T" Offset="440,140" Size="260,32" Style="BaseButton" String="Unlock" />
+			</Box>
+
+			<Label Anchor="L,T" Offset="30,280" Font="TwCenMT20" FontStyle="Shadow" String="Legacy Upgrades (permanent, apply to every future run)" />
+			<ScrollPanel ID="UpgradeScroll" Anchor="L,T" Offset="30,308" Size="810,320" Vertical="1" AutoScrollBar="1">
+				<Stack ID="UpgradeStack" StackGrowth="Bottom" Padding="2" />
+				<ScrollBar Style="VertSlider" Anchor="R,C" AnchorSide="O,I" Length="284" />
+				<UpButton Style="ScrollBarUp" Anchor="R,T" AnchorSide="O,I" />
+				<DownButton Style="ScrollBarDown" Anchor="R,B" AnchorSide="O,I" />
+			</ScrollPanel>
+
+			<GridButton ID="StartBegin" Anchor="C,B" Offset="0,24" Size="280,40" Style="BaseButton" String="Begin the Run" />
+			<GridButton ID="StartClose" Anchor="R,B" Offset="30,26" Size="160,36" Style="BaseButton" String="Close" />
+		</Grid>
+	</Box>
+
+	<!-- ============================ RUN OVER ============================ -->
+	<Box ID="RunOverPanel" Size="Full.Full" Color="0,0,0,190" ConsumeMouse="1" Hidden="1">
+		<Grid Anchor="C,C" Size="720,520" Style="Grid9DetailFive140" ConsumeMouse="1">
+			<Label ID="RunOverTitle" Anchor="C,T" Offset="0,26" Font="TwCenMT24" FontStyle="Shadow" String="" />
+			<Label ID="RunOverText" Anchor="L,T" Offset="40,76" Font="TwCenMT18" FontStyle="Shadow" WrapWidth="640" String="" />
+			<GridButton ID="RunOverLegacy" Anchor="L,B" Offset="40,28" Size="220,36" Style="BaseButton" String="Spend Legacy" />
+			<GridButton ID="RunOverContinue" Anchor="R,B" Offset="40,28" Size="220,36" Style="BaseButton" String="Continue Playing" />
+		</Grid>
+	</Box>
+
+</Context>

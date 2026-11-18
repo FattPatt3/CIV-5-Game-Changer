@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Mod id="8d1f6b2e-5c3a-4e79-9b1d-a4c27f0e6d35" version="1">
+  <Properties>
+    <Name>Ascension: Roguelite Overhaul</Name>
+    <Stability>Beta</Stability>
+    <Teaser>Every game becomes a roguelite run: drafts, events, Warlords, a Champion and permanent Legacy.</Teaser>
+    <Description>Turns every game of Civilization V into a roguelite run. Draft Boons from rarity-tiered cards, make FTL-style choices in 30 random events, survive escalating Horde raids, hunt eight Era Warlords with your ever-evolving Champion, chase Bounties and unlock Synergies. Earn Legacy that persists between games to buy permanent upgrades and Origins, then climb 10 Ascension difficulty levels. Requires Brave New World. Single player only.</Description>
+    <Authors>Ascension Roguelite contributors</Authors>
+    <SpecialThanks>The Civ V modding community</SpecialThanks>
+    <HideSetupGame>0</HideSetupGame>
+    <AffectsSavedGames>1</AffectsSavedGames>
+    <MinCompatibleSaveVersion>0</MinCompatibleSaveVersion>
+    <SupportsSinglePlayer>1</SupportsSinglePlayer>
+    <SupportsMultiplayer>0</SupportsMultiplayer>
+    <SupportsHotSeat>0</SupportsHotSeat>
+    <SupportsMac>1</SupportsMac>
+    <ReloadAudioSystem>0</ReloadAudioSystem>
+    <ReloadLandmarkSystem>0</ReloadLandmarkSystem>
+    <ReloadStrategicViewSystem>0</ReloadStrategicViewSystem>
+    <ReloadUnitSystem>0</ReloadUnitSystem>
+  </Properties>
+  <Dependencies />
+  <References />
+  <Blocks />
+  <Files>
+    <File md5="45574E385310F5DFEAC95AF0B876D3DF" import="0">SQL/RL_Buildings.sql</File>
+    <File md5="4F8393134375AA0BE0ECE81CB00D04DF" import="0">SQL/RL_Promotions.sql</File>
+    <File md5="BEB5B744BA0984BAAE4D96F4AA3BA47B" import="0">SQL/RL_Units.sql</File>
+    <File md5="1F57A86138606261AD24BC413D59BB7C" import="0">SQL/Optional/RL_Opt_Tourism.sql</File>
+    <File md5="EFE17EC34B6814F9DEEC0CA44C640844" import="0">SQL/Optional/RL_Opt_Spies.sql</File>
+    <File md5="C9A9DD2D90231B6E0CD5ED8A8E823D6E" import="0">SQL/Optional/RL_Opt_Religion.sql</File>
+    <File md5="A82CC4420AAC4310AEDBD3B72B2F3E97" import="0">SQL/Optional/RL_Opt_Trade.sql</File>
+    <File md5="45094E07939FA26FC0C1DBFE0A8B4248" import="0">SQL/Optional/RL_Opt_Features.sql</File>
+    <File md5="F62420A3CA3CC368C3ACFB43F68167E1" import="0">SQL/Optional/RL_Opt_UnitArt.sql</File>
+    <File md5="6470FB9620B882DCE737C28D5065C492" import="1">Lua/RL_Util.lua</File>
+    <File md5="B8C396FBC3DD2826A6DF6C8236CDFA3E" import="1">Lua/RL_Data_Cards.lua</File>
+    <File md5="4B090C79C581A950390F63A27378D4D6" import="1">Lua/RL_Data_World.lua</File>
+    <File md5="71AE0F994664C515AF0AC2034A671DC9" import="1">Lua/RL_Data_Events.lua</File>
+    <File md5="AB1CCF95236A4D6635B602A5AC777B7A" import="1">Lua/RL_Engine.lua</File>
+    <File md5="F23437EAD8483B8DB714CFE98D014C00" import="1">UI/AscensionRoguelite.lua</File>
+    <File md5="33CB03AE10F16E7DC4D1976B338E3199" import="1">UI/AscensionRoguelite.xml</File>
+  </Files>
+  <Actions>
+    <OnModActivated>
+      <UpdateDatabase>SQL/RL_Buildings.sql</UpdateDatabase>
+      <UpdateDatabase>SQL/RL_Promotions.sql</UpdateDatabase>
+      <UpdateDatabase>SQL/RL_Units.sql</UpdateDatabase>
+      <UpdateDatabase>SQL/Optional/RL_Opt_Tourism.sql</UpdateDatabase>
+      <UpdateDatabase>SQL/Optional/RL_Opt_Spies.sql</UpdateDatabase>
+      <UpdateDatabase>SQL/Optional/RL_Opt_Religion.sql</UpdateDatabase>
+      <UpdateDatabase>SQL/Optional/RL_Opt_Trade.sql</UpdateDatabase>
+      <UpdateDatabase>SQL/Optional/RL_Opt_Features.sql</UpdateDatabase>
+      <UpdateDatabase>SQL/Optional/RL_Opt_UnitArt.sql</UpdateDatabase>
+    </OnModActivated>
+  </Actions>
+  <EntryPoints>
+    <EntryPoint type="InGameUIAddin" file="UI/AscensionRoguelite.xml">
+      <Name>Ascension Roguelite</Name>
+      <Description>Run engine and user interface for Ascension.</Description>
+    </EntryPoint>
+  </EntryPoints>
+</Mod>
